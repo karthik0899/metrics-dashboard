@@ -1,103 +1,95 @@
-import Image from "next/image";
+// import Dashboard from "@/components/Dashboard";
 
-export default function Home() {
+// export default function Home() {
+//   return <Dashboard />;
+// }
+
+
+
+'use client'; // This page uses state and client components
+
+import React, { useState, useEffect, useMemo } from 'react';
+import DateFilter from '@/components/DateFilter';
+import InfoCards from '@/components/InfoCards';
+import ApplicationPieChart from '@/components/ApplicationPieChart';
+import RequestLineChart from '@/components/RequestLineChart';
+import ApplicationDetailModal from '@/components/ApplicationDetailModal';
+import { getFilteredData, DashboardData, Application } from '@/lib/mockData'; // Adjust path
+
+type Filter = 'day' | 'month' | 'year';
+
+export default function DashboardPage() {
+  const [filter, setFilter] = useState<Filter>('month'); // Default filter
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalStatusFilter, setModalStatusFilter] = useState<Application['status'] | null>(null);
+
+  // Fetch or filter data when the filter changes
+  useEffect(() => {
+    // Simulate fetching data based on filter
+    const data = getFilteredData(filter);
+    setDashboardData(data);
+  }, [filter]);
+
+  const handlePieSliceClick = (status: Application['status'] | null) => {
+    if (status) {
+        setModalStatusFilter(status);
+        setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalStatusFilter(null); // Reset filter when closing
+  };
+
+  // Calculate derived data (memoized for performance)
+  const { totalApplications, acceptanceRate } = useMemo(() => {
+    if (!dashboardData) return { totalApplications: 0, acceptanceRate: 0 };
+
+    const total = dashboardData.applications.length;
+    const accepted = dashboardData.applications.filter(app => app.status === 'Accepted').length;
+    const rate = total > 0 ? (accepted / total) * 100 : 0;
+
+    return { totalApplications: total, acceptanceRate: rate };
+  }, [dashboardData]);
+
+
+  if (!dashboardData) {
+    // Basic loading state
+    return <div className="p-6 text-center text-gray-500 dark:text-gray-400">Loading dashboard data...</div>;
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    // Basic page layout using Tailwind. Get inspiration from Hero UI Layouts if needed.
+    <main className="p-4 md:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 min-h-screen">
+       <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">Team Work Dashboard</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+       <DateFilter currentFilter={filter} onFilterChange={setFilter} />
+
+       <InfoCards
+           totalApplications={totalApplications}
+           acceptanceRate={acceptanceRate}
+       />
+
+       {/* Grid for charts */}
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ApplicationPieChart
+              applications={dashboardData.applications}
+              onSliceClick={handlePieSliceClick}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <RequestLineChart data={dashboardData.requestCounts} />
+       </div>
+
+       {/* Add other sections or components as needed */}
+
+       {/* Render Modal */}
+       <ApplicationDetailModal
+         isOpen={isModalOpen}
+         onClose={handleCloseModal}
+         applications={dashboardData.applications}
+         statusFilter={modalStatusFilter}
+       />
+    </main>
   );
 }
