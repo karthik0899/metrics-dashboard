@@ -16,8 +16,8 @@ interface ApplicationPieChartProps {
 
 const COLORS: { [key in Application['status']]: string } = {
   Accepted: '#00C49F', // Green
-  Transferred: '#FFBB28', // Yellow
-  Errored: '#FF8042',   // Orange/Red
+  Referred: '#FFBB28', // Yellow
+  Declined: '#FF8042',   // Orange/Red
 };
 
 const ApplicationPieChart: React.FC<ApplicationPieChartProps> = ({ applications, onSliceClick }) => {

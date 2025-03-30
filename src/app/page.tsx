@@ -63,7 +63,7 @@ export default function DashboardPage() {
   return (
     // Basic page layout using Tailwind. Get inspiration from Hero UI Layouts if needed.
     <main className="p-4 md:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 min-h-screen">
-       <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">Team Work Dashboard</h1>
+       <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-4">Dashboard</h1>
 
        <DateFilter currentFilter={filter} onFilterChange={setFilter} />
 

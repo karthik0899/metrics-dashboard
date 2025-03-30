@@ -21,10 +21,10 @@ const InfoCards: React.FC<InfoCardsProps> = ({ totalApplications, acceptanceRate
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
        <InfoCard title="Total Screenings" value={totalApplications} description="In selected period"/>
        {acceptanceRate !== undefined && (
-           <InfoCard title="Acceptance Rate" value={`${acceptanceRate.toFixed(1)}%`} />
+           <InfoCard title="Number of Frauds Detected(%)" value={`${acceptanceRate.toFixed(1)}%`} />
        )}
        {/* Add more info cards as needed */}
-       <InfoCard title="Active Channels" value="7" description=""/>
+       <InfoCard title="Active Channels" value="3" description=""/>
     </div>
   );
 };

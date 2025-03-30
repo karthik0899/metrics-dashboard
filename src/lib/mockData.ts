@@ -1,8 +1,8 @@
 export interface Application {
     id: string;
-    channel: 'Web' | 'Mobile' | 'Partner API' | 'Internal';
+    channel: 'PEGA' | 'SIRA' | 'Experian' ;
     screenings: number;
-    status: 'Accepted' | 'Transferred' | 'Errored';
+    status: 'Accepted' | 'Referred' | 'Declined';
   }
   
   export interface TimeDataPoint {
@@ -17,10 +17,10 @@ export interface Application {
   
   // Generate more realistic mock data if needed
   const generateApplications = (count: number, period: string): Application[] => {
-    const statuses: Application['status'][] = ['Accepted', 'Transferred', 'Errored'];
-    const channels: Application['channel'][] = ['Web', 'Mobile', 'Partner API', 'Internal'];
+    const statuses: Application['status'][] = ['Accepted', 'Referred', 'Declined'];
+    const channels: Application['channel'][] = ['PEGA', 'SIRA', 'Experian'];
     return Array.from({ length: count }, (_, i) => ({
-      id: `${period}-app-${String(i + 1).padStart(4, '0')}`,
+      id: `${String(i + 1).padStart(4, '0')}`,
       channel: channels[Math.floor(Math.random() * channels.length)],
       screenings: Math.floor(Math.random() * 5) + 1,
       status: statuses[Math.floor(Math.random() * statuses.length)],
